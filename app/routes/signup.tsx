@@ -37,7 +37,7 @@ export async function action ({ request }: ActionFunctionArgs) {
   const [email, password] = [formData.get('email')?.toString(), formData.get('password')?.toString()];
   if (!email || !password) { throw new Error('Email and password are required.') }
 
-  const userToCreate: WithoutId<User> = { email, password };
+  const userToCreate: WithoutId<Prisma.UserCreateInput> = { email, password };
   const userCreateResult = await dummyServer.createUser(userToCreate);
 
   if (!userCreateResult) {

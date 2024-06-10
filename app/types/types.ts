@@ -7,4 +7,4 @@ export interface UserAuthData {
 }
 
 // User with information safe to display.
-export type UserPublic = Omit<WithoutId<User>, 'password'>;
+export type UserPublic = Omit<User, 'password'>;
