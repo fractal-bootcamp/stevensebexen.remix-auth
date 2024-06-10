@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import { Prisma, User } from "@prisma/client";
 import { ActionFunctionArgs } from "@remix-run/node";
 import { Form, Link, useActionData } from "@remix-run/react";
 import { useEffect, useState } from "react";
@@ -11,7 +11,7 @@ export default function Signup() {
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
 
   useEffect(() => {
-    if (actionData?.message && actionData?.message === 'UserAlreadyExistsError') {
+    if (actionData?.success === false && actionData?.message === 'UserAlreadyExistsError') {
       setShowError(true);
     } else if (actionData?.success === true) {
       setShowSuccess(true);
@@ -37,7 +37,7 @@ export async function action ({ request }: ActionFunctionArgs) {
   const [email, password] = [formData.get('email')?.toString(), formData.get('password')?.toString()];
   if (!email || !password) { throw new Error('Email and password are required.') }
 
-  const userToCreate: WithoutId<Prisma.UserCreateInput> = { email, password };
+  const userToCreate: Prisma.UserCreateInput = { email, password };
   const userCreateResult = await dummyServer.createUser(userToCreate);
 
   if (!userCreateResult) {
