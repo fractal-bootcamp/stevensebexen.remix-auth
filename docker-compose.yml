@@ -1,0 +1,10 @@
+name: dragonauth-db
+services:
+  dragonauth-db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: dragonauth
+      POSTGRES_PASSWORD: rawrmeansiloveyou
+    ports:
+      - 10002:5432
