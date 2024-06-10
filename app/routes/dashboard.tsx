@@ -11,7 +11,6 @@ export default function Dashboard() {
   const [showEdit, setShowEdit] = useState<Boolean>(false);
 
   useEffect(() => {
-    console.log(actionData);
     if (actionData) {
       setShowEdit(false);
     }
@@ -49,12 +48,9 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export async function loader({ request }: LoaderFunctionArgs): Promise<UserPublic | null> {
-  console.log('Hi');
   const userAuthData = await authenticator.isAuthenticated(request, {
     failureRedirect: '/login'
   });
-  console.log('userAuthData', userAuthData);
   const user = await dummyServer.getUserByAuthData(userAuthData);
-  console.log('user', user);
   return user || null;
 }
