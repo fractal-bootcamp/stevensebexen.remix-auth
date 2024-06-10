@@ -8,10 +8,13 @@ import { WithoutId } from "~/types/types";
 export default function Signup() {
   const actionData: any = useActionData();
   const [showError, setShowError] = useState<boolean>(false);
+  const [showSuccess, setShowSuccess] = useState<boolean>(false);
 
   useEffect(() => {
     if (actionData?.message && actionData?.message === 'UserAlreadyExistsError') {
       setShowError(true);
+    } else if (actionData?.success === true) {
+      setShowSuccess(true);
     }
   }, [actionData]);
 
@@ -22,6 +25,7 @@ export default function Signup() {
         <input name="email" placeholder="Email" required />
         <input name="password" placeholder="Password" required />
         <input type="submit" value="Sign up" />
+        {showSuccess && <p>Your account has been created! You may now log in from the <Link to="/">main page.</Link></p>}
         {showError && <p>A user with that email already exists.</p>}
       </Form>
     </>
