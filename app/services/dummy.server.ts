@@ -1,8 +1,13 @@
-import { User } from "@prisma/client";
+import { Prisma, User } from "@prisma/client";
 import prisma from "~/prisma";
-import { UserAuthData, WithoutId } from "~/types/types";
+import { UserAuthData, UserPublic, WithoutId } from "~/types/types";
 
-async function createUser(user: WithoutId<User>): Promise<User | undefined> {
+async function changeUserProfileName(userAuthData: UserAuthData, newName: string) {
+  const result: UserPublic = await prisma.user.update({ where: { id: userAuthData.token }, data: { name: newName } });
+  return result ? { success: true, newName } : undefined;
+}
+
+async function createUser(user: Prisma.UserCreateInput): Promise<User | undefined> {
   
   const duplicateUser = await prisma.user.findFirst({
     select: { id: true },
@@ -40,6 +45,7 @@ async function login(email: string, password: string): Promise<UserAuthData> {
 }
 
 const dummyServer = {
+  changeUserProfileName,
   createUser,
   getUserByAuthData,
   login
