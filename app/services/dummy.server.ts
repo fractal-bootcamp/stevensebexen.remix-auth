@@ -3,22 +3,27 @@ import prisma from "~/prisma";
 import { UserAuthData, UserPublic, WithoutId } from "~/types/types";
 
 async function changeUserProfileName(userAuthData: UserAuthData, newName: string) {
-  const result: UserPublic = await prisma.user.update({ where: { id: userAuthData.token }, data: { name: newName } });
-  return result ? { success: true, newName } : undefined;
+  try {
+    await prisma.user.update({ where: { id: userAuthData.token }, data: { name: newName } });
+  } catch (e) {
+    console.error(e);
+    return { success: false };
+  }
+  return { success: true, newName };
 }
 
-async function createUser(user: Prisma.UserCreateInput): Promise<User | undefined> {
-  
-  const duplicateUser = await prisma.user.findFirst({
-    select: { id: true },
-    where: { email: user.email }
-  });
-  if (duplicateUser) {
-    return undefined;
+async function createUser(user: Prisma.UserCreateInput): Promise<Boolean> {
+  try {
+    await prisma.user.create({ data: { email: user.email, password: user.password }});
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      console.log('Attempt to create duplicate record:', user);
+    } else {
+      console.error(e);
+    }
+    return false;
   }
-  
-  const createdUser = await prisma.user.create({ data: { email: user.email, password: user.password }});
-  return createdUser;
+  return true;
 }
 
 async function getUserByAuthData(authData: UserAuthData): Promise<UserPublic | undefined> {
